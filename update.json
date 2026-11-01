@@ -1,8 +1,8 @@
 {
-  "versionCode": 15,
-  "versionName": "1.14.0",
+  "versionCode": 16,
+  "versionName": "1.15.0",
   "apkUrl": "https://raw.githubusercontent.com/chapsadra6-glitch/sadra-updates/main/SADRA.apk",
-  "sha256": "980f7f8382ab249eb7550efa635aec0e4943cce43e9b3aef33070e646cfbcbe6",
-  "notes": "به‌روزرسانی SADRA 1.14.0"
+  "sha256": "d5270ab20ab73a255610ae0ec160364631f64cc5571576cefbfd4032bf9687bc",
+  "notes": "به‌روزرسانی SADRA 1.15.0"
 }
 
