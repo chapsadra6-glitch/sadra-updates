@@ -1,6 +1,7 @@
 {
-  "artifact_zip_url": "https://sdmntprnortheu.oaiusercontent.com/files/00000000-aea8-81f4-828a-5c107f55870f/raw?se=2026-11-03T11%3A34%3A47Z&sp=r&sv=2026-02-06&sr=b&scid=ab27bd34-b5b4-5ba0-b076-855677fc573f&skoid=697a5987-0cd9-4222-b5b8-500b90fa271b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-03T08%3A51%3A52Z&ske=2026-11-04T08%3A51%3A52Z&sks=b&skv=2026-02-06&sig=rFUx6K/CaEDk1v/Ua%2B3frNwKR8mgKQ1z2w638kOWHGw%3D",
+  "artifact_zip_url": "https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-3ff0-8211-96dc-04716e66e702/raw?se=2026-11-03T11%3A36%3A27Z&sp=r&sv=2026-02-06&sr=b&scid=f8f166ae-e04c-555f-a08f-44f263377fd7&skoid=697a5987-0cd9-4222-b5b8-500b90fa271b&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-02T22%3A55%3A41Z&ske=2026-11-03T22%3A55%3A41Z&sks=b&skv=2026-02-06&sig=Tz4wWaDgc2etu6pCD8pL6iencxUaSoq9R4V1kCzpt6o%3D",
   "version_name": "1.20.2",
   "version_code": 24,
-  "notes": "SADRA 1.20.2"
+  "notes": "SADRA 1.20.2",
+  "retry": 2
 }
