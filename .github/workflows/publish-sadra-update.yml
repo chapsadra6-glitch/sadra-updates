@@ -63,9 +63,9 @@ jobs:
           fi
 
           BADGING="$("$AAPT" dump badging "$APK" | sed -n '1p')"
-          PACKAGE_NAME="$(printf '%s\n' "$BADGING" | sed -n "s/.*name='\([^']*\)'.*/\1/p")"
-          VERSION_CODE="$(printf '%s\n' "$BADGING" | sed -n "s/.*versionCode='\([^']*\)'.*/\1/p")"
-          VERSION_NAME="$(printf '%s\n' "$BADGING" | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")"
+          PACKAGE_NAME="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='([^']+)'.*/\1/")"
+          VERSION_CODE="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='[^']+' versionCode='([^']+)'.*/\1/")"
+          VERSION_NAME="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='[^']+' versionCode='[^']+' versionName='([^']+)'.*/\1/")"
           echo "Candidate package: $PACKAGE_NAME"
           echo "Candidate version: $VERSION_NAME ($VERSION_CODE)"
           test "$PACKAGE_NAME" = "com.sadra.attendance"
@@ -73,7 +73,7 @@ jobs:
           test "$VERSION_NAME" = "1.20.2"
 
           CURRENT_BADGING="$("$AAPT" dump badging SADRA.apk | sed -n '1p')"
-          CURRENT_CODE="$(printf '%s\n' "$CURRENT_BADGING" | sed -n "s/.*versionCode='\([^']*\)'.*/\1/p")"
+          CURRENT_CODE="$(printf '%s\n' "$CURRENT_BADGING" | sed -E "s/^package: name='[^']+' versionCode='([^']+)'.*/\1/")"
           if [ "$VERSION_CODE" -le "$CURRENT_CODE" ]; then
             echo "::error::Candidate version code is not newer than the published build."
             exit 1
