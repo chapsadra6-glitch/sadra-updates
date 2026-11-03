@@ -32,10 +32,9 @@ jobs:
         run: sdkmanager "build-tools;35.0.0"
 
       - name: Download and verify candidate
-        env:
-          ARTIFACT_URL: ${{ fromJSON(file('.update-request.json')).artifact_zip_url }}
         run: |
           set -euo pipefail
+          ARTIFACT_URL="$(jq -er '.artifact_zip_url' .update-request.json)"
           test -n "$ARTIFACT_URL"
           case "$ARTIFACT_URL" in https://*) ;; *) echo "::error::Candidate artifact URL must use HTTPS."; exit 1 ;; esac
 
