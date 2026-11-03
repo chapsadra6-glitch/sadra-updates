@@ -35,12 +35,12 @@ jobs:
         run: |
           set -euo pipefail
           ARTIFACT_URL="$(jq -er '.artifact_zip_url' .update-request.json)"
-          VERSION_NAME="$(jq -er '.version_name' .update-request.json)"
-          VERSION_CODE="$(jq -er '.version_code | tostring' .update-request.json)"
+          REQUEST_VERSION_NAME="$(jq -er '.version_name' .update-request.json)"
+          REQUEST_VERSION_CODE="$(jq -er '.version_code | tostring' .update-request.json)"
           NOTES="$(jq -r '.notes // ""' .update-request.json)"
           test -n "$ARTIFACT_URL"
-          test -n "$VERSION_NAME"
-          [[ "$VERSION_CODE" =~ ^[0-9]+$ ]]
+          test -n "$REQUEST_VERSION_NAME"
+          [[ "$REQUEST_VERSION_CODE" =~ ^[0-9]+$ ]]
           case "$ARTIFACT_URL" in https://*) ;; *) echo "::error::Candidate artifact URL must use HTTPS."; exit 1 ;; esac
 
           mkdir -p "$RUNNER_TEMP/sadra-candidate"
@@ -69,17 +69,17 @@ jobs:
 
           BADGING="$("$AAPT" dump badging "$APK" | sed -n '1p')"
           PACKAGE_NAME="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='([^']+)'.*/\1/")"
-          VERSION_CODE="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='[^']+' versionCode='([^']+)'.*/\1/")"
-          VERSION_NAME="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='[^']+' versionCode='[^']+' versionName='([^']+)'.*/\1/")"
+          APK_VERSION_CODE="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='[^']+' versionCode='([^']+)'.*/\1/")"
+          APK_VERSION_NAME="$(printf '%s\n' "$BADGING" | sed -E "s/^package: name='[^']+' versionCode='[^']+' versionName='([^']+)'.*/\1/")"
           echo "Candidate package: $PACKAGE_NAME"
-          echo "Candidate version: $VERSION_NAME ($VERSION_CODE)"
+          echo "Candidate version: $APK_VERSION_NAME ($APK_VERSION_CODE)"
           test "$PACKAGE_NAME" = "com.sadra.attendance"
-          test "$VERSION_CODE" = "$VERSION_CODE"
-          test "$VERSION_NAME" = "$VERSION_NAME"
+          test "$APK_VERSION_CODE" = "$REQUEST_VERSION_CODE"
+          test "$APK_VERSION_NAME" = "$REQUEST_VERSION_NAME"
 
           CURRENT_BADGING="$("$AAPT" dump badging SADRA.apk | sed -n '1p')"
           CURRENT_CODE="$(printf '%s\n' "$CURRENT_BADGING" | sed -E "s/^package: name='[^']+' versionCode='([^']+)'.*/\1/")"
-          if [ "$VERSION_CODE" -le "$CURRENT_CODE" ]; then
+          if [ "$REQUEST_VERSION_CODE" -le "$CURRENT_CODE" ]; then
             echo "::error::Candidate version code is not newer than the published build."
             exit 1
           fi
