@@ -35,7 +35,12 @@ jobs:
         run: |
           set -euo pipefail
           ARTIFACT_URL="$(jq -er '.artifact_zip_url' .update-request.json)"
+          VERSION_NAME="$(jq -er '.version_name' .update-request.json)"
+          VERSION_CODE="$(jq -er '.version_code | tostring' .update-request.json)"
+          NOTES="$(jq -r '.notes // ""' .update-request.json)"
           test -n "$ARTIFACT_URL"
+          test -n "$VERSION_NAME"
+          [[ "$VERSION_CODE" =~ ^[0-9]+$ ]]
           case "$ARTIFACT_URL" in https://*) ;; *) echo "::error::Candidate artifact URL must use HTTPS."; exit 1 ;; esac
 
           mkdir -p "$RUNNER_TEMP/sadra-candidate"
@@ -69,8 +74,8 @@ jobs:
           echo "Candidate package: $PACKAGE_NAME"
           echo "Candidate version: $VERSION_NAME ($VERSION_CODE)"
           test "$PACKAGE_NAME" = "com.sadra.attendance"
-          test "$VERSION_CODE" = "24"
-          test "$VERSION_NAME" = "1.20.2"
+          test "$VERSION_CODE" = "$VERSION_CODE"
+          test "$VERSION_NAME" = "$VERSION_NAME"
 
           CURRENT_BADGING="$("$AAPT" dump badging SADRA.apk | sed -n '1p')"
           CURRENT_CODE="$(printf '%s\n' "$CURRENT_BADGING" | sed -E "s/^package: name='[^']+' versionCode='([^']+)'.*/\1/")"
@@ -87,17 +92,20 @@ jobs:
         run: |
           set -euo pipefail
           APK="$(find "$RUNNER_TEMP/sadra-candidate" -type f -name '*.apk' -print -quit)"
+          VERSION_CODE="$(jq -er '.version_code | tostring' .update-request.json)"
+          VERSION_NAME="$(jq -er '.version_name' .update-request.json)"
+          NOTES="$(jq -r '.notes // ""' .update-request.json)"
           SHA256="$(sha256sum "$APK" | awk '{print $1}')"
 
           install -m 0644 "$APK" SADRA.apk
           install -m 0644 "$APK" SADRA-latest.apk
 
           jq -n \
-            --argjson versionCode 24 \
-            --arg versionName "1.20.2" \
+            --argjson versionCode "$VERSION_CODE" \
+            --arg versionName "$VERSION_NAME" \
             --arg apkUrl "https://raw.githubusercontent.com/chapsadra6-glitch/sadra-updates/main/SADRA.apk" \
             --arg sha256 "$SHA256" \
-            --arg notes "اصلاح حقوق جمعه‌ها بر اساس روزهای سپری‌شده، ثبت تاریخ پایان همکاری، بازطراحی فیش و حضور و غیاب، و بهبود ارسال پیامک." \
+            --arg notes "$NOTES" \
             '{versionCode:$versionCode,versionName:$versionName,apkUrl:$apkUrl,sha256:$sha256,notes:$notes}' \
             > update.json
 
@@ -105,5 +113,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add SADRA.apk SADRA-latest.apk update.json .update-request.json
-          git commit -m "Publish SADRA 1.20.2 internet update"
+          git commit -m "Publish SADRA $VERSION_NAME internet update"
           git push origin HEAD:main
