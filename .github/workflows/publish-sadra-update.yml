@@ -85,7 +85,7 @@ jobs:
           fi
 
           echo "Candidate package: $PACKAGE_NAME"
-          echo "Candidate version: $VERSION_NAME ($VERSION_CODE)"
+          echo "Requested release version: $REQUEST_VERSION_NAME ($REQUEST_VERSION_CODE)"
           echo "Signing certificate matches the published SADRA build."
 
       - name: Publish APK and update manifest
